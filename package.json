@@ -1,0 +1,24 @@
+{
+    "name": "employee-tracker",
+    "version": "1.0.0",
+    "description": "employee-management-app",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Anil1992-rgb/Employee-Tracker.git"
+    },
+    "author": "Anil Canbolat",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Anil1992-rgb/Employee-Tracker/issues"
+    },
+    "homepage": "https://github.com/Anil1992-rgb/Employee-Tracker#readme",
+    "dependencies": {
+        "console.table": "^0.10.0",
+        "inquirer": "^7.0.3",
+        "mysql": "^2.18.0"
+    }
+}
