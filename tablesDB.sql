@@ -56,4 +56,4 @@ VALUES ("Burak", "Canbolat", 2, null),
         ("Susan", "Anderson", 4, 2),
         ("Nancy", "Brown", 4, 2),
         ("John", "Miller", 5, 2),
-        ("Alex", "Farias", 5, 2);
+        ("Alex", "Farias", 5, 2);   

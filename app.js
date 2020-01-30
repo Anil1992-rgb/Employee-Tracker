@@ -107,44 +107,66 @@ function roleSearch() {
 };
 
 function addEmployee() {
-    inquirer
-        .prompt([{
-                type: "input",
-                name: "firstName",
-                message: "What is the employees first name?"
-            },
-            {
-                type: "input",
-                name: "lastName",
-                message: "What is the employees last name?"
-            },
-            {
-                type: "list",
-                name: "role",
-                message: "What is the employees role id?",
-                choices: [] //////////////////////////////////////////
-            },
-            {
-                type: "list",
-                name: "managerId",
-                message: "What is the employees manager ID?",
-                choices: [] ///////////////////////////////////////////
+
+    const roleList = [];
+
+    const managerList = [];
+
+    connection.query("SELECT title FROM tablesDB.role", function(err, res) {
+        if (err) throw err;
+
+        for (var i = 0; i < res.length; i++) {
+            roleList.push(res[i].title)
+        }
+
+        connection.query("SELECT first_name, last_name FROM tablesDB.employee", function(err, res) {
+            if (err) throw err;
+
+            for (var i = 0; i < res.length; i++) {
+                managerList.push(res[i].first_name + " " + res[i].last_name)
             }
-        ])
-        .then(val => {
-            connection.query(
-                "INSERT INTO employee SET ?", {
-                    first_name: val.firstName,
-                    last_name: val.lastName,
-                    role_id: val.role,
-                    manager_id: val.man
-                },
-                function(err, res) {
-                    if (err) throw err;
-                    runSearch();
-                }
-            );
-        });
+
+            inquirer
+                .prompt([{
+                        type: "input",
+                        name: "firstName",
+                        message: "What is the employees first name?"
+                    },
+                    {
+                        type: "input",
+                        name: "lastName",
+                        message: "What is the employees last name?"
+                    },
+                    {
+                        type: "list",
+                        name: "role",
+                        message: "What is the employees role id?",
+                        choices: roleList
+                    },
+                    {
+                        type: "list",
+                        name: "managerId",
+                        message: "Who is the employees manager?",
+                        choices: managerList
+                    }
+                ])
+                .then(val => {
+                    connection.query(
+                        "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, (select id from role where title = ?), (select id from  (SELECT * FROM employee) AS A where id = (select id from  (SELECT * FROM employee) AS A where concat(first_name, ' ', last_name) = ?)));", [
+                            val.firstName,
+                            // (?, ?, (SELECT id FROM role WHERE role.title = ?), (SELECT id FROM employee WHERE employee.first_name = ?));
+                            val.lastName,
+                            val.role,
+                            val.managerId
+                        ],
+                        function(err, res) {
+                            if (err) throw err;
+                            runSearch();
+                        }
+                    );
+                });
+        })
+    })
 }
 
 function addDepartment() {
