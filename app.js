@@ -154,7 +154,6 @@ function addEmployee() {
                     connection.query(
                         "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, (select id from role where title = ?), (select id from  (SELECT * FROM employee) AS A where id = (select id from  (SELECT * FROM employee) AS A where concat(first_name, ' ', last_name) = ?)));", [
                             val.firstName,
-                            // (?, ?, (SELECT id FROM role WHERE role.title = ?), (SELECT id FROM employee WHERE employee.first_name = ?));
                             val.lastName,
                             val.role,
                             val.managerId
@@ -228,7 +227,58 @@ function addRole() {
 }
 
 function updateRole() {
+    const employeeArr = [];
+    const roleList = [];
 
+    connection.query("SELECT title FROM tablesDB.role;", function(err, res) {
+        if (err) throw err;
+
+        for (var i = 0; i < res.length; i++) {
+            roleList.push(res[i].title)
+        }
+
+        connection.query("SELECT concat(employee.first_name, ' ', employee.last_name) AS Name, role.title FROM employee JOIN role ON (employee.role_id = role.id);",
+            function(err, res) {
+                if (err) throw err;
+
+                for (var i = 0; i < res.length; i++) {
+                    employeeArr.push(res[i].Name)
+                }
+                inquirer
+                    .prompt([{
+                            type: "list",
+                            name: "employeeChoice",
+                            message: "Who's role do you want to change?",
+                            choices: employeeArr
+                        },
+                        {
+                            type: "list",
+                            name: "newRole",
+                            message: "Choose the new role",
+                            choices: roleList
+                        }
+                    ])
+                    .then(answers => {
+                        const employeeFirstName = answers.employeeChoice
+                            .split(" ")
+                            .slice(0, -1)
+                            .join(" ");
+                        const employeeLastName = answers.employeeChoice
+                            .split(" ")
+                            .slice(-1)
+                            .join(" ");
+
+                        connection.query(
+                            "UPDATE employee SET role_id = (SELECT id FROM (SELECT * FROM role) AS A WHERE title = '${answers.newRole}') WHERE id = (SELECT id from (SELECT * FROM employee) AS A WHERE first_name = '${employeeFirstName}'AND last_name = '${employeeLastName}');",
+
+                            function(err, res) {
+                                if (err) throw err;
+                                runSearch();
+                            }
+                        );
+                    });
+            })
+    })
 }
 
 function exit() {
