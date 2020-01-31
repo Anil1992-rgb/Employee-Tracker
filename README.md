@@ -29,4 +29,4 @@ Node command line app that lets you manage a companys employee directory includi
 ___________________________________________________________________________________________________________________________________
 
 
-![Example profile](./example.png)
+![Example profile](./exmple.png)
