@@ -188,7 +188,7 @@ function addDepartment() {
 function addRole() {
     const deptChoicesArr = [];
 
-    connection.query("SELECT name FROM tablesdb.department;", function(err, res) {
+    connection.query("SELECT name FROM tablesDB.department;", function(err, res) {
         if (err) throw err;
 
         for (var i = 0; i < res.length; i++) {
@@ -258,28 +258,27 @@ function updateRole() {
                             choices: roleList
                         }
                     ])
-                    .then(answers => {
-                        const employeeFirstName = answers.employeeChoice
+                    .then(val => {
+                        const employeeFirstName = val.employeeChoice
                             .split(" ")
                             .slice(0, -1)
                             .join(" ");
-                        const employeeLastName = answers.employeeChoice
+                        const employeeLastName = val.employeeChoice
                             .split(" ")
                             .slice(-1)
                             .join(" ");
 
                         connection.query(
-                            "UPDATE employee SET role_id = (SELECT id FROM (SELECT * FROM role) AS A WHERE title = '${answers.newRole}') WHERE id = (SELECT id from (SELECT * FROM employee) AS A WHERE first_name = '${employeeFirstName}'AND last_name = '${employeeLastName}');",
-
+                            `UPDATE tablesDB.employee SET role_id = (SELECT id FROM (SELECT * FROM role) AS A WHERE title = '${val.newRole}') WHERE id = (SELECT id from (SELECT * FROM employee) AS A WHERE first_name = '${employeeFirstName}'AND last_name = '${employeeLastName}');`,
                             function(err, res) {
                                 if (err) throw err;
                                 runSearch();
                             }
                         );
                     });
-            })
-    })
-}
+            });
+    });
+};
 
 function exit() {
     connection.end();
