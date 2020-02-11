@@ -160,6 +160,9 @@ function addEmployee() {
                         ],
                         function(err, res) {
                             if (err) throw err;
+                            console.log("\n");
+                            console.log("Successfully added Employee");
+                            console.log("\n");
                             runSearch();
                         }
                     );
@@ -179,7 +182,9 @@ function addDepartment() {
                 name: val.department
             }, function(err, res) {
                 if (err) throw err;
-                departmentSearch();
+                console.log("\n");
+                console.log("successfully added Department");
+                console.log("\n");
                 runSearch();
             });
         });
@@ -219,6 +224,9 @@ function addRole() {
                     ],
                     function(err, res) {
                         if (err) throw err;
+                        console.log("\n");
+                        console.log("successfully added Role");
+                        console.log("\n");
                         runSearch();
                     });
             });
@@ -272,6 +280,9 @@ function updateRole() {
                             `UPDATE tablesDB.employee SET role_id = (SELECT id FROM (SELECT * FROM role) AS A WHERE title = '${val.newRole}') WHERE id = (SELECT id from (SELECT * FROM employee) AS A WHERE first_name = '${employeeFirstName}'AND last_name = '${employeeLastName}');`,
                             function(err, res) {
                                 if (err) throw err;
+                                console.log("\n");
+                                console.log("successfully updated Role");
+                                console.log("\n");
                                 runSearch();
                             }
                         );
